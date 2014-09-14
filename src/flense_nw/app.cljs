@@ -8,7 +8,6 @@
             flense.actions.movement
             flense.actions.paredit
             [flense.editor :refer [editor-view]]
-            flense.editor.layout
             [flense.model :as model]
             [flense-nw.cli :refer [cli-view]]
             [flense-nw.error :refer [error-bar-view]]

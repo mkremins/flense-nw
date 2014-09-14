@@ -6,7 +6,7 @@
    [com.facebook/react "0.11.1"]
    [om "0.7.1"]
    [spellhouse/phalanges "0.1.3"]
-   [mkremins/flense "0.0-278"]
+   [mkremins/flense "0.0-SNAPSHOT"]
    [mkremins/fs "0.3.0"]]
 
   :plugins

@@ -1,11 +1,11 @@
 (defproject mkremins/flense-nw "0.0-SNAPSHOT"
   :dependencies
   [[org.clojure/clojure "1.6.0"]
-   [org.clojure/clojurescript "0.0-2322"]
-   [org.clojure/core.async "0.1.338.0-5c5012-alpha"]
-   [com.facebook/react "0.11.1"]
-   [om "0.7.1"]
-   [spellhouse/phalanges "0.1.3"]
+   [org.clojure/clojurescript "0.0-2341"]
+   [org.clojure/core.async "0.1.346.0-17112a-alpha"]
+   [com.facebook/react "0.11.2"]
+   [om "0.7.3"]
+   [spellhouse/phalanges "0.1.4"]
    [mkremins/flense "0.0-SNAPSHOT"]
    [mkremins/fs "0.3.0"]]
 

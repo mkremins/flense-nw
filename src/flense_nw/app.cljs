@@ -1,12 +1,8 @@
 (ns flense-nw.app
   (:require [cljs.core.async :as async :refer [<!]]
             [cljs.reader :as rdr]
-            [flense.actions :refer [actions defaction]]
+            [flense.actions :refer [default-actions]]
             [flense.actions.history :as hist]
-            flense.actions.clipboard
-            flense.actions.clojure
-            flense.actions.movement
-            flense.actions.paredit
             [flense.editor :refer [editor-view]]
             [flense.model :as model]
             [flense-nw.cli :refer [cli-view]]
@@ -45,6 +41,11 @@
      :tree {:children
             (->> (fs/slurp fpath) model/string->forms (mapv model/form->tree))}}))
 
+(def actions
+  (assoc default-actions :flense/text-command
+         ;; dummy action to trap ctrl+x keybind
+         (with-meta identity {:tags #{:end-text-editing :text-command}})))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; text commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -56,7 +57,7 @@
 
 (defmethod handle-command "exec" [_ & args]
   (if-let [name (first args)]
-    (if-let [action (-> name rdr/read-string (@actions))]
+    (if-let [action (-> name rdr/read-string actions)]
       (async/put! edit-chan action)
       (raise! "Invalid action \"" name \"))
     (raise! "Must specify an action to execute")))
@@ -73,13 +74,11 @@
 (def ^:dynamic *keymap*)
 
 (defn- bound-action [ev]
-  (-> ev phalanges/key-set *keymap* (@actions)))
-
-(defaction :flense/text-command :edit identity) ; dummy action to trap ctrl+x keybind
+  (-> ev phalanges/key-set *keymap* actions))
 
 (defn- handle-key [ev]
   (when-let [action (bound-action ev)]
-    (if (= (:name action) :flense/text-command)
+    (if (contains? (:tags (meta action)) :text-command)
       (.. js/document (getElementById "cli") focus)
       (do (.preventDefault ev)
           (async/put! edit-chan action)))))
@@ -92,9 +91,9 @@
   (when-let [action (bound-action ev)]
     (if (model/stringlike? form)
       ;; prevent all keybinds except those that end editing
-      (#{:flense/text-command :move/up :paredit/insert-outside} (:name action))
+      (contains? (:tags (meta action)) :end-text-editing)
       ;; prevent delete keybind unless text fully selected
-      (or (not= (:name action) :flense/remove)
+      (or (not (contains? (:tags (meta action)) :remove))
           (fully-selected? (.-target ev))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

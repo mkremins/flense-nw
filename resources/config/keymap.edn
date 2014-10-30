@@ -1,5 +1,5 @@
 {; naked --------------------------------------------------------------------
- #{:backspace}                         :paredit/remove
+ #{:backspace}                         :paredit/delete
  #{:down}                              :move/down
  #{:enter}                             :paredit/insert-outside
  #{:left}                              :move/left
@@ -42,6 +42,7 @@
  #{:meta :shift :up}                   :paredit/raise
 
  ; SHIFT --------------------------------------------------------------------
+ #{:shift :backspace}                  :paredit/delete-hard
  #{:shift :left}                       :move/prev
  #{:shift :nine}                       :paredit/wrap-round
  #{:shift :open-square-bracket}        :paredit/wrap-curly

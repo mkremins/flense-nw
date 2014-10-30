@@ -76,25 +76,22 @@
 (defn- bound-action [ev]
   (-> ev phalanges/key-set *keymap* actions))
 
-(defn- handle-key [ev]
+(defn- handle-keydown [ev]
   (when-let [action (bound-action ev)]
     (if (contains? (:tags (meta action)) :text-command)
       (.. js/document (getElementById "cli") focus)
       (do (.preventDefault ev)
           (async/put! edit-chan action)))))
 
-(defn- fully-selected? [input]
-  (and (= (.-selectionStart input) 0)
-       (= (.-selectionEnd input) (count (.-value input)))))
+(defn- handle-keypress [ev]
+  (let [c (phalanges/key-char ev)]
+    (when-let [action (actions (keyword "text" (str "insert-" c)))]
+      (.preventDefault ev)
+      (async/put! edit-chan action))))
 
 (defn- propagate-keypress? [ev form]
   (when-let [action (bound-action ev)]
-    (if (model/stringlike? form)
-      ;; prevent all keybinds except those that end editing
-      (contains? (:tags (meta action)) :end-text-editing)
-      ;; prevent delete keybind unless text fully selected
-      (or (not (contains? (:tags (meta action)) :remove))
-          (fully-selected? (.-target ev))))))
+    (contains? (:tags (meta action)) :end-text-editing)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; application setup and wiring
@@ -123,6 +120,7 @@
       (let [[command & args] (<! command-chan)]
         (apply handle-command command args))
       (recur))
-    (.addEventListener js/window "keydown" handle-key)))
+    (.addEventListener js/window "keydown" handle-keydown)
+    (.addEventListener js/window "keypress" handle-keypress)))
 
 (init)

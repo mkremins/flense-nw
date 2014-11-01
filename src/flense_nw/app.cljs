@@ -19,10 +19,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def ^:private app-state
-  (atom
-   {:path [0]
-    :tree {:children
-           [(model/form->tree '(fn greet [name] (str "Hello, " name "!")))]}}))
+  (atom {:path [0]
+         :tree {:children (mapv model/form->tree
+                            '[(defn greet [name] (str "Hello, " name "!"))])}}))
 
 (def ^:private edit-chan (async/chan))
 (def ^:private error-chan (async/chan))
@@ -93,18 +92,12 @@
 ;; application setup and wiring
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn- handle-tx [{:keys [new-state tag] :or {tag #{}}}]
-  (when-not (tag :history)
-    (hist/push-state! new-state)))
-
 (defn init []
   (set! *keymap* (rdr/read-string (fs/slurp "resources/config/keymap.edn")))
   (let [command-chan (async/chan)]
-    (hist/push-state! @app-state)
     (om/root editor-view app-state
              {:target (.getElementById js/document "editor-parent")
-              :opts {:edit-chan edit-chan}
-              :tx-listen handle-tx})
+              :opts {:edit-chan edit-chan}})
     (om/root cli-view nil
              {:target (.getElementById js/document "cli-parent")
               :shared {:command-chan command-chan}})

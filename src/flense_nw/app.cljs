@@ -44,7 +44,7 @@
 (def actions
   (assoc default-actions :flense/text-command
          ;; dummy action to trap ctrl+x keybind
-         (with-meta identity {:tags #{:end-text-editing :text-command}})))
+         (with-meta identity {:tags #{:text-command}})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; text commands
@@ -89,10 +89,6 @@
       (.preventDefault ev)
       (async/put! edit-chan action))))
 
-(defn- propagate-keypress? [ev form]
-  (when-let [action (bound-action ev)]
-    (contains? (:tags (meta action)) :end-text-editing)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; application setup and wiring
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -107,8 +103,7 @@
     (hist/push-state! @app-state)
     (om/root editor-view app-state
              {:target (.getElementById js/document "editor-parent")
-              :opts {:edit-chan edit-chan
-                     :propagate-keypress? propagate-keypress?}
+              :opts {:edit-chan edit-chan}
               :tx-listen handle-tx})
     (om/root cli-view nil
              {:target (.getElementById js/document "cli-parent")

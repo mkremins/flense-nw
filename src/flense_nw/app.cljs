@@ -19,9 +19,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def ^:private app-state
-  (atom {:path [0]
-         :tree {:children (mapv model/form->tree
-                            '[(defn greet [name] (str "Hello, " name "!"))])}}))
+  (atom (model/forms->document
+          '[(defn greet [name] (str "Hello, " name "!"))])))
 
 (def ^:private edit-chan (async/chan))
 (def ^:private error-chan (async/chan))
@@ -36,9 +35,7 @@
    changes made to the previously active document."
   [fpath]
   (reset! app-state
-    {:path [0]
-     :tree {:children
-            (->> (fs/slurp fpath) model/string->forms (mapv model/form->tree))}}))
+          (->> (fs/slurp fpath) model/string->forms model/forms->document)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; text commands

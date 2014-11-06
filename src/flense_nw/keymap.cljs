@@ -53,7 +53,5 @@
    #{:meta :shift :d} clojure/jump-to-definition
    #{:shift :three} clojure/toggle-dispatch
 
-   #{:meta :z} (with-meta history/undo {:tags #{:history}})
-   #{:meta :y} (with-meta history/redo {:tags #{:history}})
-
-   #{:ctrl :x} (with-meta identity {:tags #{:text-command}})})
+   #{:meta :z} history/undo
+   #{:meta :y} history/redo})

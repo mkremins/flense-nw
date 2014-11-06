@@ -1,12 +1,12 @@
 (ns flense-nw.app
   (:require [cljs.core.async :as async :refer [<!]]
             [cljs.reader :as rdr]
-            [flense.actions :refer [default-actions]]
-            [flense.actions.history :as hist]
+            [flense.actions.text :as text]
             [flense.editor :refer [editor-view]]
             [flense.model :as model]
             [flense-nw.cli :refer [cli-view]]
             [flense-nw.error :refer [error-bar-view]]
+            [flense-nw.keymap :refer [keymap]]
             [fs.core :as fs]
             [om.core :as om]
             [phalanges.core :as phalanges])
@@ -40,11 +40,6 @@
      :tree {:children
             (->> (fs/slurp fpath) model/string->forms (mapv model/form->tree))}}))
 
-(def actions
-  (assoc default-actions :flense/text-command
-         ;; dummy action to trap ctrl+x keybind
-         (with-meta identity {:tags #{:text-command}})))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; text commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -53,13 +48,6 @@
 
 (defmethod handle-command :default [command & _]
   (raise! "Invalid command \"" command \"))
-
-(defmethod handle-command "exec" [_ & args]
-  (if-let [name (first args)]
-    (if-let [action (-> name rdr/read-string actions)]
-      (async/put! edit-chan action)
-      (raise! "Invalid action \"" name \"))
-    (raise! "Must specify an action to execute")))
 
 (defmethod handle-command "open" [_ & args]
   (if-let [fpath (first args)]
@@ -70,30 +58,31 @@
 ;; keybinds
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(def ^:dynamic *keymap*)
-
-(defn- bound-action [ev]
-  (-> ev phalanges/key-set *keymap* actions))
-
 (defn- handle-keydown [ev]
-  (when-let [action (bound-action ev)]
+  (when-let [action (keymap (phalanges/key-set ev))]
     (if (contains? (:tags (meta action)) :text-command)
       (.. js/document (getElementById "cli") focus)
       (do (.preventDefault ev)
           (async/put! edit-chan action)))))
 
+(def legal-char?
+  (let [uppers (map (comp js/String.fromCharCode (partial + 65)) (range 26))
+        lowers (map (comp js/String.fromCharCode (partial + 97)) (range 26))
+        digits (map str (range 10))
+        puncts [\. \! \? \$ \% \& \+ \- \* \/ \= \< \> \_ \: \' \\ \|]]
+    (set (concat uppers lowers digits puncts))))
+
 (defn- handle-keypress [ev]
   (let [c (phalanges/key-char ev)]
-    (when-let [action (actions (keyword "text" (str "insert-" c)))]
+    (when (legal-char? c)
       (.preventDefault ev)
-      (async/put! edit-chan action))))
+      (async/put! edit-chan (partial text/insert-char c)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; application setup and wiring
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn init []
-  (set! *keymap* (rdr/read-string (fs/slurp "resources/config/keymap.edn")))
   (let [command-chan (async/chan)]
     (om/root editor-view app-state
              {:target (.getElementById js/document "editor-parent")

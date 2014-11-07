@@ -30,12 +30,21 @@
   [& mparts]
   (async/put! error-chan (apply str mparts)))
 
+(defn- string->forms [string]
+  (let [pbr (rdr/push-back-reader string)
+        eof (js/Object.)]
+    (loop [forms []]
+      (let [form (rdr/read pbr false eof false)]
+        (if (= form eof)
+          forms
+          (recur (conj forms form)))))))
+
 (defn open!
   "Load the source file at `fpath` and open the loaded document, discarding any
    changes made to the previously active document."
   [fpath]
   (reset! app-state
-          (->> (fs/slurp fpath) model/string->forms model/forms->document)))
+          (->> (fs/slurp fpath) string->forms model/forms->document)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; text commands

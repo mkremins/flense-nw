@@ -65,11 +65,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn- handle-keydown [ev]
-  (when-let [action (keymap (phalanges/key-set ev))]
-    (if (contains? (:tags (meta action)) :text-command)
-      (.. js/document (getElementById "cli") focus)
+  (let [keyset (phalanges/key-set ev)]
+    (if (= keyset #{:ctrl :x})
       (do (.preventDefault ev)
-          (async/put! edit-chan action)))))
+          (.. js/document (getElementById "cli") focus))
+      (when-let [action (keymap keyset)]
+        (.preventDefault ev)
+        (async/put! edit-chan action)))))
 
 (def legal-char?
   (let [uppers (map (comp js/String.fromCharCode (partial + 65)) (range 26))

@@ -2,7 +2,7 @@
   (:require [cljs.core.async :as async :refer [<!]]
             [cljs.reader :as rdr]
             [flense.actions.text :as text]
-            [flense.editor :refer [editor-view]]
+            [flense.editor :as flense]
             [flense.model :as model]
             [flense-nw.cli :refer [cli-view]]
             [flense-nw.error :refer [error-bar-view]]
@@ -92,7 +92,7 @@
 
 (defn init []
   (let [command-chan (async/chan)]
-    (om/root editor-view app-state
+    (om/root flense/editor app-state
              {:target (.getElementById js/document "editor-parent")
               :opts {:edit-chan edit-chan}})
     (om/root cli-view nil

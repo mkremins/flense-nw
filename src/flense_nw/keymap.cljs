@@ -1,6 +1,7 @@
 (ns flense-nw.keymap
   (:require [flense.actions.clipboard :as clipboard]
             [flense.actions.clojure :as clojure]
+            [flense.actions.completions :as completions]
             [flense.actions.history :as history]
             [flense.actions.paredit :as paredit]
             [flense.actions.text :as text]
@@ -20,7 +21,6 @@
    #{:backspace} #(or (text/delete-char %) (paredit/delete %))
    #{:shift :backspace} paredit/delete
    #{:shift :space} paredit/insert-left
-   #{:enter} paredit/insert-outside
    #{:space} paredit/insert-right
 
    #{:ctrl :shift :open-square-bracket} paredit/make-map
@@ -49,6 +49,7 @@
    #{:meta :x} clipboard/cut
    #{:meta :v} clipboard/paste
    
+   #{:enter} completions/complete
    #{:tab} clojure/expand-template
    #{:meta :shift :d} clojure/jump-to-definition
    #{:shift :three} clojure/toggle-dispatch

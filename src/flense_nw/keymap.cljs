@@ -49,8 +49,7 @@
    #{:meta :x} clipboard/cut
    #{:meta :v} clipboard/paste
    
-   #{:enter} completions/complete
-   #{:tab} clojure/expand-template
+   #{:tab} completions/complete
    #{:meta :shift :d} clojure/jump-to-definition
    #{:shift :three} clojure/toggle-dispatch
 

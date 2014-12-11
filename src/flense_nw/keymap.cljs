@@ -9,10 +9,10 @@
             [xyzzy.core :as z]))
 
 (def keymap
-  {#{:down} text/down
+  {#{:down} (some-fn text/begin-editing completions/next-completion z/down)
    #{:left} z/left-or-wrap
    #{:right} z/right-or-wrap
-   #{:up} text/up
+   #{:up} (some-fn text/cease-editing completions/prev-completion z/up)
    #{:shift :left} z/prev
    #{:shift :right} z/next
    #{:meta :shift :k} model/prev-placeholder

@@ -9,6 +9,25 @@ body {
   font-family: 'Source Code Pro';
   font-size: 14px;
   line-height: 1.4;
+}
+
+.tab-bar {
+  background: #eee;
+}
+
+.tab {
+  display: inline-block;
+  font-family: 'Lucida Grande', Verdana, sans-serif;
+  font-size: 12px;
+  padding: 0.5rem 1rem;
+  min-width: 80px;
+}
+
+.tab.selected {
+  background: #fff;
+}
+
+.tab-content {
   margin-left: 5%;
   margin-top: 40px;
 }

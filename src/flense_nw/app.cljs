@@ -9,6 +9,7 @@
             [flense-nw.keymap :refer [keymap]]
             [fs.core :as fs]
             [om.core :as om]
+            [om.dom :as dom]
             [phalanges.core :as phalanges])
   (:require-macros [cljs.core.async.macros :refer [go-loop]]))
 
@@ -18,11 +19,14 @@
 ;; top-level state setup and management
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(def ^:private app-state
-  (atom (model/forms->document
-          '[(defn greet [name] (str "Hello, " name "!"))])))
+(defn ->tab [name forms]
+  {:name name :document (model/forms->document forms)})
 
-(def ^:private edit-chan (async/chan))
+(def ^:private app-state
+  (atom {:selected-tab 0
+         :tabs [(->tab "scratch"
+                  '[(defn greet [name] (str "Hello, " name "!"))])]}))
+
 (def ^:private error-chan (async/chan))
 
 (defn raise!
@@ -40,11 +44,11 @@
           (recur (conj forms form)))))))
 
 (defn open!
-  "Load the source file at `fpath` and open the loaded document, discarding any
-   changes made to the previously active document."
+  "Load the source file at `fpath` and open the loaded document in a new tab."
   [fpath]
-  (reset! app-state
-          (->> (fs/slurp fpath) string->forms model/forms->document)))
+  (let [forms (string->forms (fs/slurp fpath))
+        tabs (conj (:tabs @app-state) (->tab fpath forms))]
+    (reset! app-state {:selected-tab (dec (count tabs)) :tabs tabs})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; text commands
@@ -64,6 +68,10 @@
 ;; keybinds
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defn perform! [action]
+  (swap! app-state update-in [:tabs (:selected-tab @app-state) :document]
+         (flense/perform action)))
+
 (defn- handle-keydown [ev]
   (let [keyset (phalanges/key-set ev)]
     (if (= keyset #{:ctrl :x})
@@ -71,7 +79,7 @@
           (.. js/document (getElementById "cli") focus))
       (when-let [action (keymap keyset)]
         (.preventDefault ev)
-        (async/put! edit-chan action)))))
+        (perform! action)))))
 
 (def legal-char?
   (let [uppers (map (comp js/String.fromCharCode (partial + 65)) (range 26))
@@ -84,17 +92,31 @@
   (let [c (phalanges/key-char ev)]
     (when (legal-char? c)
       (.preventDefault ev)
-      (async/put! edit-chan (partial text/insert-char c)))))
+      (perform! (partial text/insert-char c)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; application setup and wiring
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defn tabs [data owner opts]
+  (reify om/IRender
+    (render [_]
+      (let [{:keys [selected-tab tabs]} data]
+        (dom/div #js {:className "tabs"}
+          (apply dom/div #js {:className "tab-bar"}
+            (for [i (range (count tabs))]
+              (dom/div #js {
+                :className (str "tab" (when (= i selected-tab) " selected"))
+                :onClick #(om/update! data :selected-tab i)}
+                (:name (nth tabs i)))))
+          (dom/div #js {:className "tab-content"}
+            (let [{:keys [document]} (nth tabs selected-tab)]
+              (om/build flense/editor document {:opts opts}))))))))
+
 (defn init []
   (let [command-chan (async/chan)]
-    (om/root flense/editor app-state
-             {:target (.getElementById js/document "editor-parent")
-              :opts {:edit-chan edit-chan}})
+    (om/root tabs app-state
+             {:target (.getElementById js/document "editor-parent")})
     (om/root cli-view nil
              {:target (.getElementById js/document "cli-parent")
               :shared {:command-chan command-chan}})

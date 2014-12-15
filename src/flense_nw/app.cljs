@@ -109,9 +109,12 @@
                 :className (str "tab" (when (= i selected-tab) " selected"))
                 :onClick #(om/update! data :selected-tab i)}
                 (:name (nth tabs i)))))
-          (dom/div #js {:className "tab-content"}
-            (let [{:keys [document]} (nth tabs selected-tab)]
-              (om/build flense/editor document {:opts opts}))))))))
+          (apply dom/div #js {:className "tab-content"}
+            (for [i (range (count tabs))
+                  :let [{:keys [document]} (nth tabs i)]]
+              (dom/div #js {
+                :style #js {:display (if (= i selected-tab) "block" "none")}}
+                (om/build flense/editor document {:opts opts})))))))))
 
 (defn init []
   (let [command-chan (async/chan)]

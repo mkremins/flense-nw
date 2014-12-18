@@ -2,7 +2,7 @@
   (:require [cljs.core.async :as async]
             [clojure.string :as string]
             [om.core :as om :include-macros true]
-            [om.dom :as dom :include-macros true]
+            [om.dom :as dom]
             [phalanges.core :as phalanges]))
 
 (defn- handle-key [command-chan ev]
@@ -19,9 +19,8 @@
   (.stopPropagation ev))
 
 (defn cli-view [_ owner]
-  (reify om/IRender
-    (render [_]
-      (dom/input
-        #js {:id "cli"
-             :onKeyDown #(handle-key (om/get-shared owner :command-chan) %)
-             :onKeyPress #(.stopPropagation %)}))))
+  (om/component
+    (dom/input
+      #js {:id "cli"
+           :onKeyDown #(handle-key (om/get-shared owner :command-chan) %)
+           :onKeyPress #(.stopPropagation %)})))

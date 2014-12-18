@@ -1,7 +1,7 @@
 (ns flense-nw.error
   (:require [cljs.core.async :as async :refer [alts!]]
-            [om.core :as om :include-macros true]
-            [om.dom :as dom :include-macros true])
+            [om.core :as om]
+            [om.dom :as dom])
   (:require-macros [cljs.core.async.macros :refer [go-loop]]))
 
 (def ^:private TIMEOUT_MILLIS 4000)

@@ -8,7 +8,7 @@
             [flense-nw.error :refer [error-bar-view]]
             [flense-nw.keymap :refer [keymap]]
             [fs.core :as fs]
-            [om.core :as om]
+            [om.core :as om :include-macros true]
             [om.dom :as dom]
             [phalanges.core :as phalanges])
   (:require-macros [cljs.core.async.macros :refer [go-loop]]))
@@ -99,22 +99,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn tabs [data owner opts]
-  (reify om/IRender
-    (render [_]
-      (let [{:keys [selected-tab tabs]} data]
-        (dom/div #js {:className "tabs"}
-          (apply dom/div #js {:className "tab-bar"}
-            (for [i (range (count tabs))]
-              (dom/div #js {
-                :className (str "tab" (when (= i selected-tab) " selected"))
-                :onClick #(om/update! data :selected-tab i)}
-                (:name (nth tabs i)))))
-          (apply dom/div #js {:className "tab-content"}
-            (for [i (range (count tabs))
-                  :let [{:keys [document]} (nth tabs i)]]
-              (dom/div #js {
-                :style #js {:display (if (= i selected-tab) "block" "none")}}
-                (om/build flense/editor document {:opts opts})))))))))
+  (om/component
+    (let [{:keys [selected-tab tabs]} data]
+      (dom/div #js {:className "tabs"}
+        (apply dom/div #js {:className "tab-bar"}
+          (for [i (range (count tabs))]
+            (dom/div #js {
+              :className (str "tab" (when (= i selected-tab) " selected"))
+              :onClick #(om/update! data :selected-tab i)}
+              (:name (nth tabs i)))))
+        (apply dom/div #js {:className "tab-content"}
+          (for [i (range (count tabs))
+                :let [{:keys [document]} (nth tabs i)]]
+            (dom/div #js {
+              :style #js {:display (if (= i selected-tab) "block" "none")}}
+              (om/build flense/editor document {:opts opts}))))))))
 
 (defn init []
   (let [command-chan (async/chan)]

@@ -15,15 +15,15 @@
 
 (def keymap
   {#{:down} (some-fn text/begin-editing completions/next-completion z/down)
-   #{:left} z/left-or-wrap
-   #{:right} z/right-or-wrap
+   #{:left} (some-fn text/prev-char z/left-or-wrap)
+   #{:right} (some-fn text/next-char z/right-or-wrap)
    #{:up} (some-fn text/cease-editing completions/prev-completion z/up)
    #{:shift :left} z/prev
    #{:shift :right} z/next
    #{:meta :shift :k} model/prev-placeholder
    #{:meta :shift :l} model/next-placeholder
 
-   #{:backspace} #(or (text/delete-char %) (paredit/delete %))
+   #{:backspace} (some-fn text/delete-char paredit/delete)
    #{:shift :backspace} paredit/delete
    #{:shift :space} paredit/insert-left
    #{:space} (maybe-insert-char \space paredit/insert-right)

@@ -1,10 +1,10 @@
 # flense-nw
 
-flense-nw is a Clojure code editor app written using [node-webkit](https://github.com/rogerwang/node-webkit) and [Flense](https://github.com/mkremins/flense). Essentially, flense-nw wraps an instance of the baseline Flense editor component in an imitation of the traditional text editor interface, providing functionality like file I/O, configurable keybinds, and a way to enter text commands.
+flense-nw is a Clojure code editor app written using [nw.js](http://nwjs.io/) and [Flense](https://github.com/mkremins/flense). Essentially, flense-nw wraps an instance of the baseline Flense editor component in an imitation of the traditional text editor interface, providing functionality like file I/O, configurable keybinds, and a way to enter text commands.
 
 ## Building
 
-flense-nw runs on [node-webkit](https://github.com/rogerwang/node-webkit). You'll also need [npm](https://www.npmjs.org/) to install some of the dependencies and [Leiningen](http://leiningen.org/) to compile the ClojureScript source.
+flense-nw runs on [nw.js](http://nwjs.io/). You'll also need [npm](https://www.npmjs.org/) to install some of the dependencies and [Leiningen](http://leiningen.org/) to compile the ClojureScript source.
 
 For the time being, flense-nw builds against the latest snapshot version of Flense. It's recommended that you check out the [Flense repo](https://github.com/mkremins/flense) and `lein install` it in your local repository before attempting to build flense-nw.
 
@@ -12,7 +12,7 @@ For the time being, flense-nw builds against the latest snapshot version of Flen
 cd path/to/flense
 lein cljsbuild once
 npm install
-path/to/node-webkit .
+path/to/nwjs .
 ```
 
 This will build flense-nw from source and launch it as a standalone GUI app.
@@ -21,7 +21,7 @@ This will build flense-nw from source and launch it as a standalone GUI app.
 
 #### Using React Development Tools
 
-Flense uses Facebook's [React.js](https://github.com/facebook/react) library (via David Nolen's [Om](https://github.com/swannodette/om)). React team offers useful [React Developer Tools](https://github.com/facebook/react-devtools) (RDT), which is a Chrome extension for inspecting and debugging React components (it integrates into Chrome's dev tools). Flense-nw is running in node-webkit (aka [nw.js]((https://github.com/nwjs/nw.js))). The problem is that RDT cannot be easily installed into nw.js itself.
+Flense uses Facebook's [React.js](https://github.com/facebook/react) library (via David Nolen's [Om](https://github.com/swannodette/om)). The React team offers a useful [React Developer Tools](https://github.com/facebook/react-devtools) (RDT) Chrome extension for inspecting and debugging React components (it integrates into Chrome's dev tools). However, flense-nw runs in [nw.js](https://github.com/nwjs/nw.js), and RDT cannot be easily installed into nw.js itself.
 
 A solution is to use standalone devtools (frontend) in a standalone Chrome with RDT extension installed and instruct devtools to connect to our remote backend (our nw.js context running inside Flense-nw). It is easily doable, but it requires a special setup:
 
@@ -32,10 +32,10 @@ A solution is to use standalone devtools (frontend) in a standalone Chrome with 
   
 ##### Development workflow
 
-1. run node-webkit instance with remote debugging enabled:
+1. run nw.js instance with remote debugging enabled:
 
         cd path/to/flense-nw
-        path/to/node-webkit --remote-debugging-port=9222 .
+        path/to/nwjs --remote-debugging-port=9222 .
         
 2. launch `/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary --no-first-run --user-data-dir=~/temp/chrome-dev-profile`
 3. in Chrome navigate to [http://localhost:9222/json](http://localhost:9222/json)

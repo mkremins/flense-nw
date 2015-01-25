@@ -8,8 +8,9 @@
             [flense-nw.error :refer [error-bar-view]]
             [flense-nw.keymap :refer [keymap]]
             [fs.core :as fs]
-            [om.core :as om :include-macros true]
-            [om.dom :as dom]
+            [om.core :as om]
+            [om-tools.core :refer-macros [defcomponent]]
+            [om-tools.dom :as dom]
             [phalanges.core :as phalanges])
   (:require-macros [cljs.core.async.macros :refer [go-loop]]))
 
@@ -98,21 +99,19 @@
 ;; application setup and wiring
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn tabs [data owner opts]
-  (om/component
+(defcomponent tabs [data owner opts]
+  (render [_]
     (let [{:keys [selected-tab tabs]} data]
-      (dom/div #js {:className "tabs"}
-        (apply dom/div #js {:className "tab-bar"}
+      (dom/div {:class "tabs"}
+        (dom/div {:class "tab-bar"}
           (for [i (range (count tabs))]
-            (dom/div #js {
-              :className (str "tab" (when (= i selected-tab) " selected"))
-              :onClick #(om/update! data :selected-tab i)}
+            (dom/div {:class (str "tab" (when (= i selected-tab) " selected"))
+                      :on-click #(om/update! data :selected-tab i)}
               (:name (nth tabs i)))))
-        (apply dom/div #js {:className "tab-content"}
+        (dom/div {:class "tab-content"}
           (for [i (range (count tabs))
                 :let [{:keys [document]} (nth tabs i)]]
-            (dom/div #js {
-              :style #js {:display (if (= i selected-tab) "block" "none")}}
+            (dom/div {:style {:display (if (= i selected-tab) "block" "none")}}
               (om/build flense/editor document {:opts opts}))))))))
 
 (defn init []

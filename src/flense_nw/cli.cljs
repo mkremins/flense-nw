@@ -1,8 +1,9 @@
 (ns flense-nw.cli
   (:require [cljs.core.async :as async]
             [clojure.string :as string]
-            [om.core :as om :include-macros true]
-            [om.dom :as dom]
+            [om.core :as om]
+            [om-tools.core :refer-macros [defcomponent]]
+            [om-tools.dom :as dom]
             [phalanges.core :as phalanges]))
 
 (defn- handle-key [command-chan ev]
@@ -18,9 +19,9 @@
       nil)
   (.stopPropagation ev))
 
-(defn cli-view [_ owner]
-  (om/component
+(defcomponent cli-view [_ owner]
+  (render [_]
     (dom/input
-      #js {:id "cli"
-           :onKeyDown #(handle-key (om/get-shared owner :command-chan) %)
-           :onKeyPress #(.stopPropagation %)})))
+      {:id "cli"
+       :on-key-down #(handle-key (om/get-shared owner :command-chan) %)
+       :on-key-press #(.stopPropagation %)})))

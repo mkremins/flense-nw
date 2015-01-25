@@ -59,6 +59,30 @@ Voila! Now you should have a debug session estabilished between your devtools in
 
 Last tested with Chrome Canary 42.0.2283.5 and RDT 0.12.1.
 
+#### ClojureScript REPL
+
+```bash
+lein repl
+```
+
+Next, require the `repl` namespace and boot the Clojurescript repl:
+
+```clojure
+(require '[flense-nw.repl :as repl])
+(repl/repl!)
+```
+
+This will start a Websocket repl using [Weasel](https://github.com/tomjakubowski/weasel). When you reload flense-nw application, it should automatically connect to Weasel and anything you type at the repl will start evaluating.
+
+```clojure
+(in-ns 'flense-nw.app)
+app-state
+```
+
+Should print current app-state:
+
+    #<Atom: {:selected-tab 0, :tabs [{:name "scratch", :document {:path [0], :tree {:children [{:type :seq, :children [{:type :symbol, :text "defn", :path [0 0]} {:type :symbol, :text "greet", :path [0 1]} {:type :vec, :children [{:type :symbol, :text "name", :path [0 2 0]}], :path [0 2]} {:type :seq, :children [{:type :symbol, :text "str", :path [0 3 0]} {:type :string, :text "Hello, ", :path [0 3 1]} {:type :symbol, :text "name", :path [0 3 2]} {:type :string, :text "!", :path [0 3 3]}], :path [0 3]}], :path [0]}]}}}]}>
+
 ## License
 
 [MIT License](http://opensource.org/licenses/MIT). Hack away.

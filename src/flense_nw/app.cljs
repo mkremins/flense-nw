@@ -11,7 +11,8 @@
             [om.core :as om]
             [om-tools.core :refer-macros [defcomponent]]
             [om-tools.dom :as dom]
-            [phalanges.core :as phalanges])
+            [phalanges.core :as phalanges]
+            [weasel.repl :as ws-repl])
   (:require-macros [cljs.core.async.macros :refer [go-loop]]))
 
 (enable-console-print!)
@@ -131,4 +132,5 @@
     (.addEventListener js/window "keydown" handle-keydown)
     (.addEventListener js/window "keypress" handle-keypress)))
 
+(ws-repl/connect "ws://localhost:9001")
 (init)

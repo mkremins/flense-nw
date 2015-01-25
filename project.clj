@@ -3,14 +3,20 @@
   [[org.clojure/clojure "1.6.0"]
    [org.clojure/clojurescript "0.0-2727"]
    [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-   [org.omcljs/om "0.8.4"]
+;   [org.omcljs/om "0.8.4"] <- having the same issue as https://groups.google.com/d/msg/clojurescript/rB5sj6vp3UU/w2aHkowXewQJ
+   [org.om/om "0.8.1"]
    [prismatic/om-tools "0.3.10"]
    [spellhouse/phalanges "0.1.4"]
    [mkremins/flense "0.0-SNAPSHOT"]
-   [mkremins/fs "0.3.0"]]
+   [mkremins/fs "0.3.0"]
+   [weasel "0.5.0"]
+   [com.cemerick/piggieback "0.1.5"]]
 
   :plugins
   [[lein-cljsbuild "1.0.4"]]
+
+  :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
+  :source-paths ["src", "src-dev"] ; note: "src" must be included to prevent https://github.com/mfikes/weasel-src-paths
 
   :cljsbuild
   {:builds

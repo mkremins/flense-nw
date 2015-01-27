@@ -3,13 +3,12 @@
   [[org.clojure/clojure "1.6.0"]
    [org.clojure/clojurescript "0.0-2727"]
    [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-;   [org.omcljs/om "0.8.4"] <- having the same issue as https://groups.google.com/d/msg/clojurescript/rB5sj6vp3UU/w2aHkowXewQJ
-   [org.om/om "0.8.1"]
+   [org.omcljs/om "0.8.6"]
    [prismatic/om-tools "0.3.10"]
    [spellhouse/phalanges "0.1.4"]
    [mkremins/flense "0.0-SNAPSHOT"]
    [mkremins/fs "0.3.0"]
-   [weasel "0.5.0"]
+   [weasel "0.5.1-SNAPSHOT"]
    [com.cemerick/piggieback "0.1.5"]]
 
   :plugins

@@ -8,9 +8,9 @@
             [flense.model :as model]
             [xyzzy.core :as z]))
 
-(defn maybe-insert-char [ch else-fn]
+(defn maybe-insert [ch else-fn]
   #(if (model/editing? %)
-     (text/insert-char ch %)
+     (text/insert ch %)
      (else-fn %)))
 
 (def keymap
@@ -23,10 +23,10 @@
    #{:meta :shift :k} model/prev-placeholder
    #{:meta :shift :l} model/next-placeholder
 
-   #{:backspace} (some-fn text/delete-char paredit/delete)
+   #{:backspace} (some-fn text/delete paredit/delete)
    #{:shift :backspace} paredit/delete
    #{:shift :space} paredit/insert-left
-   #{:space} (maybe-insert-char \space paredit/insert-right)
+   #{:space} (maybe-insert \space paredit/insert-right)
 
    #{:ctrl :shift :open-square-bracket} paredit/make-map
    #{:ctrl :shift :nine} paredit/make-seq

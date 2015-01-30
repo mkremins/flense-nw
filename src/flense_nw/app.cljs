@@ -94,7 +94,7 @@
   (let [c (phalanges/key-char ev)]
     (when (legal-char? c)
       (.preventDefault ev)
-      (perform! (partial text/insert-char c)))))
+      (perform! (partial text/insert c)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; application setup and wiring

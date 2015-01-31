@@ -15,11 +15,11 @@
 
 (def keymap
   {#{:down} (some-fn text/begin-editing completions/next-completion z/down)
-   #{:left} (some-fn text/prev-char z/left-or-wrap)
-   #{:right} (some-fn text/next-char z/right-or-wrap)
+   #{:left} (some-fn text/move-caret-left z/left-or-wrap)
+   #{:right} (some-fn text/move-caret-right z/right-or-wrap)
    #{:up} (some-fn text/cease-editing completions/prev-completion z/up)
-   #{:shift :left} z/prev
-   #{:shift :right} z/next
+   #{:shift :left} (some-fn text/adjust-range-left z/prev)
+   #{:shift :right} (some-fn text/adjust-range-right z/next)
    #{:meta :shift :k} model/prev-placeholder
    #{:meta :shift :l} model/next-placeholder
 

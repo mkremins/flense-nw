@@ -18,6 +18,8 @@
    #{:left} (some-fn text/move-caret-left z/left-or-wrap)
    #{:right} (some-fn text/move-caret-right z/right-or-wrap)
    #{:up} (some-fn text/cease-editing completions/prev-completion z/up)
+   #{:alt :left} text/move-caret-left-by-word
+   #{:alt :right} text/move-caret-right-by-word
    #{:shift :left} (some-fn text/adjust-range-left z/prev)
    #{:shift :right} (some-fn text/adjust-range-right z/next)
    #{:meta :shift :k} model/prev-placeholder

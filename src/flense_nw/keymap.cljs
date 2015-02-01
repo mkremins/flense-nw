@@ -22,6 +22,8 @@
    #{:alt :right} text/move-caret-right-by-word
    #{:shift :left} (some-fn text/adjust-range-left z/prev)
    #{:shift :right} (some-fn text/adjust-range-right z/next)
+   #{:alt :shift :left} text/adjust-range-left-by-word
+   #{:alt :shift :right} text/adjust-range-right-by-word
    #{:meta :shift :k} model/prev-placeholder
    #{:meta :shift :l} model/next-placeholder
 

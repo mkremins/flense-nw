@@ -1,4 +1,5 @@
-(ns flense-nw.env)
+(ns flense-nw.env
+  (:require [devtools.core :as dev]))
 
 ; note: depends on resources/scripts/env.js
 
@@ -11,4 +12,5 @@
 (defn init! []
   (if (browser-present?)
     (println "Browser present - some node functionatily could be broken.")
-    (println "NW.JS present.")))
+    (println "NW.JS present."))
+  (dev/install-devtools!))

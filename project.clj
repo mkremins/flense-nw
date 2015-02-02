@@ -23,5 +23,5 @@
      :compiler {:main flense-nw.app
                 :output-to "target/flense.js"
                 :output-dir "target"
-                :source-map "target/flense.js.map"
+                :source-map true
                 :optimizations :none}}]})

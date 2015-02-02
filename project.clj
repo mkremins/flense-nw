@@ -8,6 +8,7 @@
    [spellhouse/phalanges "0.1.4"]
    [mkremins/flense "0.0-SNAPSHOT"]
    [mkremins/fs "0.3.0"]
+   [com.binaryage/devtools "0.0-SNAPSHOT"]
    [weasel "0.5.1-SNAPSHOT"]
    [com.cemerick/piggieback "0.1.5"]]
 

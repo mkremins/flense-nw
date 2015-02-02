@@ -19,7 +19,44 @@ This will build flense-nw from source and launch it as a standalone GUI app.
 
 ### Development tips
 
-#### Using React Development Tools
+#### Running flense editor directly from a browser
+
+This can be handy for quick tests or when using some bleeding-edge developer tools not available under NW.JS. 
+Just keep in mind that some non-essential editor functionality can be broken in this environment. For example opening/saving 
+files from local filesystem depends on node.js libraries embedded by NW.JS.
+
+I personally run simple HTTP server this way:
+
+```bash
+cd path/to/flense-nw
+python -m SimpleHTTPServer
+```
+
+#### ClojureScript REPL
+
+```bash
+lein repl
+```
+
+Next, require the `repl` namespace and boot the Clojurescript repl:
+
+```clojure
+(require '[flense-nw.repl :as repl])
+(repl/repl!)
+```
+
+This will start a Websocket repl using [Weasel](https://github.com/tomjakubowski/weasel). When you reload flense-nw application, it should automatically connect to Weasel and anything you type at the repl will start evaluating.
+
+```clojure
+(in-ns 'flense-nw.app)
+app-state
+```
+
+Should print current app-state:
+
+    #<Atom: {:selected-tab 0, :tabs [{:name "scratch", :document {:path [0], :tree {:children [{:type :seq, :children [{:type :symbol, :text "defn", :path [0 0]} {:type :symbol, :text "greet", :path [0 1]} {:type :vec, :children [{:type :symbol, :text "name", :path [0 2 0]}], :path [0 2]} {:type :seq, :children [{:type :symbol, :text "str", :path [0 3 0]} {:type :string, :text "Hello, ", :path [0 3 1]} {:type :symbol, :text "name", :path [0 3 2]} {:type :string, :text "!", :path [0 3 3]}], :path [0 3]}], :path [0]}]}}}]}>
+
+#### Using React Development Tools with NW.JS
 
 Flense uses Facebook's [React.js](https://github.com/facebook/react) library (via David Nolen's [Om](https://github.com/swannodette/om)). The React team offers a useful [React Developer Tools](https://github.com/facebook/react-devtools) (RDT) Chrome extension for inspecting and debugging React components (it integrates into Chrome's dev tools). However, flense-nw runs in [nw.js](https://github.com/nwjs/nw.js), and RDT cannot be easily installed into nw.js itself.
 
@@ -58,30 +95,6 @@ A solution is to use standalone devtools (frontend) in a standalone Chrome with 
 Voila! Now you should have a debug session estabilished between your devtools in Chrome (devtools frontend) and your Flense-nw application (devtools backend).
 
 Last tested with Chrome Canary 42.0.2283.5 and RDT 0.12.1.
-
-#### ClojureScript REPL
-
-```bash
-lein repl
-```
-
-Next, require the `repl` namespace and boot the Clojurescript repl:
-
-```clojure
-(require '[flense-nw.repl :as repl])
-(repl/repl!)
-```
-
-This will start a Websocket repl using [Weasel](https://github.com/tomjakubowski/weasel). When you reload flense-nw application, it should automatically connect to Weasel and anything you type at the repl will start evaluating.
-
-```clojure
-(in-ns 'flense-nw.app)
-app-state
-```
-
-Should print current app-state:
-
-    #<Atom: {:selected-tab 0, :tabs [{:name "scratch", :document {:path [0], :tree {:children [{:type :seq, :children [{:type :symbol, :text "defn", :path [0 0]} {:type :symbol, :text "greet", :path [0 1]} {:type :vec, :children [{:type :symbol, :text "name", :path [0 2 0]}], :path [0 2]} {:type :seq, :children [{:type :symbol, :text "str", :path [0 3 0]} {:type :string, :text "Hello, ", :path [0 3 1]} {:type :symbol, :text "name", :path [0 3 2]} {:type :string, :text "!", :path [0 3 3]}], :path [0 3]}], :path [0]}]}}}]}>
 
 ## License
 

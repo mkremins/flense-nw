@@ -4,6 +4,7 @@
             [flense.actions.text :as text]
             [flense.editor :as flense]
             [flense.model :as model]
+            [flense-nw.env :as env]
             [flense-nw.cli :refer [cli-view]]
             [flense-nw.error :refer [error-bar-view]]
             [flense-nw.keymap :refer [keymap]]
@@ -16,6 +17,7 @@
   (:require-macros [cljs.core.async.macros :refer [go-loop]]))
 
 (enable-console-print!)
+(env/init!)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; top-level state setup and management

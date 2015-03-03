@@ -1,6 +1,6 @@
 (ns flense-nw.app
   (:require [cljs.core.async :as async :refer [<!]]
-            [cljs.reader :as rdr]
+            [decodn.core :as decodn]
             [flense.actions.text :as text]
             [flense.editor :as flense]
             [flense.model :as model]
@@ -23,13 +23,11 @@
 ;; top-level state setup and management
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn ->tab [name forms]
-  {:name name :document (model/forms->document forms)})
-
 (def ^:private app-state
   (atom {:selected-tab 0
-         :tabs [(->tab "scratch"
-                  '[(defn greet [name] (str "Hello, " name "!"))])]}))
+         :tabs [{:name "scratch"
+                 :document (model/forms->document
+                             '[(defn greet [name] (str "Hello, " name "!"))])}]}))
 
 (def ^:private error-chan (async/chan))
 
@@ -38,20 +36,12 @@
   [& mparts]
   (async/put! error-chan (apply str mparts)))
 
-(defn- string->forms [string]
-  (let [pbr (rdr/push-back-reader string)
-        eof (js/Object.)]
-    (loop [forms []]
-      (let [form (rdr/read pbr false eof false)]
-        (if (= form eof)
-          forms
-          (recur (conj forms form)))))))
-
 (defn open!
   "Load the source file at `fpath` and open the loaded document in a new tab."
   [fpath]
-  (let [forms (string->forms (fs/slurp fpath))
-        tabs (conj (:tabs @app-state) (->tab fpath forms))]
+  (let [tree (-> fpath fs/slurp decodn/read-document model/annotate-paths)
+        tabs (conj (:tabs @app-state)
+                   {:name fpath :document {:path [0] :tree tree}})]
     (reset! app-state {:selected-tab (dec (count tabs)) :tabs tabs})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

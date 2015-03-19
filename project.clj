@@ -1,11 +1,11 @@
 (defproject mkremins/flense-nw "0.0-SNAPSHOT"
   :dependencies
   [[org.clojure/clojure "1.6.0"]
-   [org.clojure/clojurescript "0.0-2913"]
+   [org.clojure/clojurescript "0.0-3126"]
    [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-   [org.omcljs/om "0.8.6"]
-   [prismatic/om-tools "0.3.10"]
-   [spellhouse/phalanges "0.1.4"]
+   [org.omcljs/om "0.8.8"]
+   [prismatic/om-tools "0.3.11"]
+   [spellhouse/phalanges "0.1.6"]
    [mkremins/decodn "0.0-SNAPSHOT"]
    [mkremins/flense "0.0-SNAPSHOT"]
    [mkremins/fs "0.3.0"]

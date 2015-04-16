@@ -59,7 +59,7 @@
    #{:meta :v} clipboard/paste
    
    #{:tab} completions/complete
-   #{:meta :shift :d} clojure/jump-to-definition
+   #{:meta :shift :d} clojure/find-introduction
    #{:shift :three} clojure/toggle-dispatch
 
    #{:meta :z} history/undo

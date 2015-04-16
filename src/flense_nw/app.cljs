@@ -1,6 +1,7 @@
 (ns flense-nw.app
   (:require [cljs.core.async :as async :refer [<!]]
             [decodn.core :as decodn]
+            [flense.actions.clojure :as clojure]
             [flense.actions.text :as text]
             [flense.editor :as flense]
             [flense.model :as model]
@@ -44,6 +45,10 @@
                    {:name fpath :document {:path [0] :tree tree}})]
     (reset! app-state {:selected-tab (dec (count tabs)) :tabs tabs})))
 
+(defn perform! [action]
+  (swap! app-state update-in [:tabs (:selected-tab @app-state) :document]
+         (flense/perform action)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; text commands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -58,13 +63,14 @@
     (open! fpath)
     (raise! "Must specify a filepath to open")))
 
+(defmethod handle-command "rename" [_ & args]
+  (if-let [new-name (first args)]
+    (perform! #(clojure/rename-symbol % new-name))
+    (raise! "Must specify a new name to use")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; keybinds
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn perform! [action]
-  (swap! app-state update-in [:tabs (:selected-tab @app-state) :document]
-         (flense/perform action)))
 
 (defn- handle-keydown [ev]
   (let [keyset (phalanges/key-set ev)]

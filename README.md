@@ -2,6 +2,8 @@
 
 flense-nw is a Clojure code editor app written using [nw.js](http://nwjs.io/) and [Flense](https://github.com/mkremins/flense). Essentially, flense-nw wraps an instance of the baseline Flense editor component in an imitation of the traditional text editor interface, providing functionality like file I/O, configurable keybinds, and a way to enter text commands.
 
+Want to see it in action? Check out this short [video demo](https://www.youtube.com/watch?v=Vh9AymZsqEk) of the basic editing functionality.
+
 ## Building
 
 flense-nw runs on [nw.js](http://nwjs.io/). You'll also need [npm](https://www.npmjs.org/) to install some of the dependencies and [Leiningen](http://leiningen.org/) to compile the ClojureScript source.
